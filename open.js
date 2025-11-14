@@ -18,9 +18,9 @@ function crc8(buffer) {
 function buildSerialFrame(dataBytes) {
   const header1 = 0xAA;
   const header2 = 0x55;
-  const dataLength = 0x02;
+  const dataLength = 0x03;
   const boardAddress = 0x00;
-  const instruction = 0x51;
+  const instruction = 0x50;
 
   const frameWithoutCRC = [
     header1,

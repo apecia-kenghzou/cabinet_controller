@@ -35,11 +35,12 @@ export async function getHealth(req, res) {
  */
 export async function getCabinetStatus(req, res) {
   try {
+    console.log('hello world')
     // Check if fresh status is requested
     const requestFresh = req.query.fresh === 'true';
 
     const status = await cabinetService.getCabinetStatus(requestFresh);
-
+    console.log(status)
     res.status(200).json({
       status: 'success',
       data: status,

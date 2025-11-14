@@ -57,7 +57,7 @@ function delay(ms) {
 port.on("open",  async () => {
   console.log("✅ Serial port opened on COM3 (9600 8N1)");
 
-    const frame = buildSerialFrame([0x03]);
+    const frame = buildSerialFrame([0x00]);
     const hexStr = frame.toString("hex").match(/.{1,2}/g).join(" ");
     console.log(`📤 Sending frame for data: ${hexStr}`);
 

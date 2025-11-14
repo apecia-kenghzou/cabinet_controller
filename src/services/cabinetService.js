@@ -10,7 +10,7 @@ class CabinetService {
   constructor() {
     this.port = null;
     this.isConnected = false;
-    this.portPath = process.env.SERIAL_PORT || 'COM1';
+    this.portPath = process.env.SERIAL_PORT || 'COM3';
     this.baudRate = parseInt(process.env.BAUD_RATE || '9600');
     this.cabinetStatus = {};
     this.responseBuffer = Buffer.alloc(0);
@@ -129,7 +129,7 @@ class CabinetService {
       // Send frame for each cabinet ID with 500ms delay between sends
       for (const cabinetId of cabinetIds) {
         try {
-          const frame = buildSerialFrame([cabinetId]);
+          const frame = buildSerialFrame([cabinetId],0x00,0x50);
           await this.sendFrame(frame);
 
           // Add to tracking
@@ -146,7 +146,7 @@ class CabinetService {
           });
 
           // Small delay between sends
-          await this.delay(100);
+          await this.delay(1000);
         } catch (err) {
           results.failed.push({
             id: cabinetId,
@@ -167,13 +167,15 @@ class CabinetService {
    * @returns {Promise<void>}
    */
   async requestStatus() {
+    console.log('hello')
     if (!this.isConnected || !this.port) {
       throw new Error('Serial port not connected');
     }
 
     try {
-      // Build status request frame (instruction 0x50, no data bytes)
-      const frame = buildSerialFrame([], 0x00, 0x50);
+      
+      // Build status request frame (instruction 0x51, no data bytes)
+      const frame = buildSerialFrame([], 0x00, 0x51);
       console.log('Requesting status from hardware...');
       await this.sendFrame(frame);
 
@@ -196,6 +198,7 @@ class CabinetService {
    * @returns {Promise<Object>|Object} Object containing all cabinet statuses
    */
   async getCabinetStatus(requestFresh = false) {
+    console.log(requestFresh)
     if (requestFresh && this.isConnected) {
       try {
         await this.requestStatus();
@@ -317,7 +320,7 @@ class CabinetService {
 
         parsedStatuses[cabinetId] = {
           id: cabinetId,
-          status: bitValue === 1 ? 'available' : 'unavailable',
+          status: bitValue === 1 ? 'open' : 'close',
           statusByte: byteIndex,
           statusBit: bitIndex,
           rawBit: bitValue,
