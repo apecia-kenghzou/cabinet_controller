@@ -234,13 +234,13 @@ class CabinetService {
         console.log('Requesting status from hardware...');
         await this.sendFrame(frame);
 
-        // Set a timeout to wait for response
-        return new Promise((resolve, reject) => {
-          this.statusRequestTimeout = setTimeout(() => {
-            console.warn('Status request timeout - no response from hardware within 2 seconds');
-            resolve(); // Resolve anyway, status may update later
-          }, 2000);
-        });
+        // // Set a timeout to wait for response
+        // return new Promise((resolve, reject) => {
+        //   this.statusRequestTimeout = setTimeout(() => {
+        //     console.warn('Status request timeout - no response from hardware within 2 seconds');
+        //     resolve(); // Resolve anyway, status may update later
+        //   }, 2000);
+        // });
       } catch (err) {
         throw new Error(`Failed to request status: ${err.message}`);
       }
