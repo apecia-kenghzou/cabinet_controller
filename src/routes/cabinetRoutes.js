@@ -8,7 +8,8 @@ import {
   getHealth,
   getCabinetStatus,
   openCabinets,
-  resetStatus
+  resetStatus,
+  setLightStatus
 } from '../controllers/cabinetController.js';
 
 const router = express.Router();
@@ -24,6 +25,12 @@ router.get('/health', getHealth);
  * GET /api/v1/cabinet/status
  */
 router.get('/cabinet/status', getCabinetStatus);
+
+/**
+ * Set Light Status
+ * GET /api/v1/cabinet/light
+ */
+router.get('/cabinet/light', setLightStatus);
 
 /**
  * Open cabinets

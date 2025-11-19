@@ -218,6 +218,45 @@ class CabinetService {
   }
 
   /**
+   * Set Light Status
+   * Changes the light status of cabinets
+   * @param {boolean} control - If true, turn lights on; if false, turn lights off
+   * @returns {Promise<Object>|Object} Object containing operation result
+   */
+  async setLightStatus(control = false) {
+    if (this.isConnected) {
+      
+
+      try {
+        let control_val = control ? 0x00 : 0x01;
+        // Build status request frame (instruction 0x54, no data bytes)
+        const frame = buildSerialFrame([control_val], 0x00, 0x54);
+        console.log('Requesting status from hardware...');
+        await this.sendFrame(frame);
+
+        // Set a timeout to wait for response
+        return new Promise((resolve, reject) => {
+          this.statusRequestTimeout = setTimeout(() => {
+            console.warn('Status request timeout - no response from hardware within 2 seconds');
+            resolve(); // Resolve anyway, status may update later
+          }, 2000);
+        });
+      } catch (err) {
+        throw new Error(`Failed to request status: ${err.message}`);
+      }
+    }else if (!this.isConnected || !this.port) {
+      throw new Error('Serial port not connected');
+    }
+
+    return {
+      connected: this.isConnected,
+      portPath: this.portPath,
+      baudRate: this.baudRate,
+      status: 'Light status changed',
+    };
+  }
+
+  /**
    * Validate and extract a complete frame from the buffer
    * @param {Buffer} buffer - Response buffer
    * @returns {Object|null} { frame: Buffer, remaining: Buffer } or null if invalid

@@ -154,3 +154,31 @@ export async function resetStatus(req, res) {
     });
   }
 }
+
+/**
+ * Set Light Status
+ * GET /api/v1/cabinet/light
+ * Query parameters:
+ *   - status: if true, requests fresh status from hardware
+ */
+export async function setLightStatus(req, res) {
+  try {
+    // Check if fresh status is requested
+    const control = req.query.status === 'true';
+
+    const status = await cabinetService.setLightStatus(control);
+    console.log(status)
+    res.status(200).json({
+      status: 'success',
+      data: status,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Set Light Status error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to set Light status',
+      error: error.message
+    });
+  }
+}
